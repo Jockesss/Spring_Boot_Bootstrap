@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.service.UserService;
@@ -28,35 +29,35 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public String loginPage() {
-        return "auth/login";
+    public ModelAndView loginPage() {
+        return new ModelAndView( "auth/login");
     }
 
     @GetMapping("/registration")
-    public String registrationPage(Model model) {
+    public ModelAndView registrationPage(Model model) {
         User user = new User();
         model.addAttribute("user", user);
-        return "auth/registration";
+        return new ModelAndView("auth/registration");
     }
     @PostMapping("/registration")
-    public String createUser(@ModelAttribute("user") User user) throws Exception {
+    public ModelAndView createUser(@ModelAttribute("user") User user) throws Exception {
         if (user.getName() != "" && user.getLastName() != "") {
             user.setRoles(roleRepository.findAllById(Collections.singleton(1L)));
             userService.saveUser(user);
         }
-        return "redirect:/login";
+        return new ModelAndView("redirect:/login");
     }
 
     @GetMapping("/registrationadmin")
-    public String registrationPageAdmin(Model model) {
+    public ModelAndView registrationPageAdmin(Model model) {
         model.addAttribute("user", new User());
-        return "auth/registrationadmin";
+        return new ModelAndView("auth/registrationadmin");
     }
     @PostMapping("/registrationadmin")
-    public String createUserAdmin(@ModelAttribute("user") User user) throws Exception {
+    public ModelAndView createUserAdmin(@ModelAttribute("user") User user) throws Exception {
         user.setRoles(roleRepository.findAllById(Collections.singleton(2L)));
         userService.saveUser(user);
-        return "redirect:/login";
+        return new ModelAndView("redirect:/login");
     }
 }
 
